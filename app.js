@@ -4,11 +4,9 @@ const app = document.getElementById('app');
 const $ = id => document.getElementById(id);
 
 const SEED = [
-  ['Célina', 'CreativeCelina'], ['Gaby', 'Gabsert'], ['jamin', 'jasminereis'],
-  ['Julie G', 'GreJu250'], ['Juls', 'Qz7PabLEw'], ['Kenzo Antonio', 'DenItaliener'],
-  ['Lara', 't3elR0ulara'], ['Leo', 'dl3W0i5BrSAuMuG'], ['leylaa', 'N2wcZ1tqFL'],
-  ['Mia', ''], ['Sophie', 'casso543'], ['Whitney', 'Whitneyribeiro'], ['Yann', 'CreativeYann'],
-].map(([name, user]) => ({ name, user }));
+  'Célina', 'Gaby', 'jamin', 'Julie G', 'Juls', 'Kenzo Antonio', 'Lara',
+  'Leo', 'leylaa', 'Mia', 'Sophie', 'Whitney', 'Yann',
+].map(name => ({ name }));
 
 let people;
 try { people = JSON.parse(localStorage.getItem(KEY)) || SEED; } catch { people = SEED; }
@@ -21,15 +19,14 @@ const mount = id => {
   app.classList.add('enter');
 };
 
-const row = (cls, name, user) => {
+const row = (cls, name) => {
   const li = document.createElement('li');
   li.className = cls;
   li.innerHTML = `
     <span class="avatar mono"></span>
-    <span class="person-text"><span class="person-name"></span><span class="person-user mono"></span></span>`;
+    <span class="person-text"><span class="person-name"></span></span>`;
   li.querySelector('.avatar').textContent = name.slice(0, 1).toUpperCase();
   li.querySelector('.person-name').textContent = name;
-  li.querySelector('.person-user').textContent = user ? `@${user}` : '';
   return li;
 };
 
@@ -46,7 +43,7 @@ function setup() {
     if (!name) return;
     if (people.some(p => p.name.toLowerCase() === name.toLowerCase()))
       return showError(`${name} is already on the list.`);
-    people.push({ name, user: '' });
+    people.push({ name });
     $('add-name').value = '';
     save();
     renderPeople();
@@ -67,7 +64,7 @@ function showError(msg) {
 function renderPeople() {
   $('count').textContent = people.length;
   $('people').replaceChildren(...people.map((p, i) => {
-    const li = row('person', p.name, p.user);
+    const li = row('person', p.name);
     const btn = document.createElement('button');
     btn.className = 'icon-btn';
     btn.setAttribute('aria-label', `Remove ${p.name}`);
@@ -107,8 +104,8 @@ function showLinks(pairs, id) {
 
   $('links').replaceChildren(...people.map(p => {
     const r = people.find(o => o.name === pairs[p.name]);
-    const url = `${location.origin}${location.pathname}#p=${Wichtel.encode({ i: id, n: p.name, r: r.name, u: r.user })}`;
-    const li = row('link-row', p.name, p.user);
+    const url = `${location.origin}${location.pathname}#p=${Wichtel.encode({ i: id, n: p.name, r: r.name })}`;
+    const li = row('link-row', p.name);
     const btn = document.createElement('button');
     btn.className = 'chip';
     btn.textContent = 'Copy link';
@@ -149,8 +146,6 @@ function reveal(data) {
   btn.addEventListener('click', () => {
     const open = btn.classList.toggle('open');
     $('match').textContent = open ? data.r : 'Tap to see who you draw';
-    $('match-user').textContent = data.u ? `@${data.u}` : '';
-    $('match-user').hidden = !open || !data.u;
     $('reveal-hint').textContent = open ? 'Tap again to hide.' : 'Make sure nobody is looking at your screen.';
   });
 }
