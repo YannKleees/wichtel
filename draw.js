@@ -8,27 +8,15 @@
     return a;
   };
 
-  // people: [{name, partner}] -> {giver: receiver}
-  // Tries a single gift circle first (no two people draw each other), then any valid derangement.
+  // people: [{name}] -> {giver: receiver}
+  // One random gift circle: nobody draws themselves and no two people draw each other.
   function draw(people, rnd = Math.random) {
     const n = people.length;
     if (n < 3) throw new Error('Add at least three people.');
     const names = people.map(p => p.name);
     if (new Set(names).size !== n) throw new Error('Every name has to be unique.');
-    const partner = Object.fromEntries(people.map(p => [p.name, p.partner || null]));
-    const ok = (g, r) => g !== r && partner[g] !== r && partner[r] !== g;
-
-    for (let t = 0; t < 5000; t++) {
-      const c = shuffle(names, rnd);
-      if (c.every((g, i) => ok(g, c[(i + 1) % n])))
-        return Object.fromEntries(c.map((g, i) => [g, c[(i + 1) % n]]));
-    }
-    for (let t = 0; t < 20000; t++) {
-      const r = shuffle(names, rnd);
-      if (names.every((g, i) => ok(g, r[i])))
-        return Object.fromEntries(names.map((g, i) => [g, r[i]]));
-    }
-    throw new Error('No valid draw with these couples. Remove a partner link and try again.');
+    const c = shuffle(names, rnd);
+    return Object.fromEntries(c.map((g, i) => [g, c[(i + 1) % n]]));
   }
 
   // Link payload. Base64url so the match is not readable in a chat preview. Not encryption.
