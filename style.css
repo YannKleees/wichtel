@@ -1,0 +1,135 @@
+/* Home screen of widgets: grey wallpaper, white rounded tiles, 2 column grid. */
+:root {
+  --bg: #e9e9ec;
+  --tile: #ffffff;
+  --fg: #111113;
+  --muted: #8a8a90;
+  --line: #e6e6ea;
+  --dot: #d6d6db;
+  --ink: #111113;
+  --on-ink: #ffffff;
+  --danger: #b4232f;
+  --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 22px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111113; --tile: #1c1c1f; --fg: #f2f2f4; --muted: #8d8d94;
+    --line: #2a2a2e; --dot: #34343a; --ink: #f2f2f4; --on-ink: #111113; --danger: #ff6b74;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); }
+body {
+  font: 400 15px/1.4 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  padding: max(28px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+[hidden] { display: none !important; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.screen { max-width: 440px; margin: 0 auto; display: grid; gap: 16px; }
+.enter { animation: rise .35s ease-out both; }
+@keyframes rise { from { opacity: .4; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .enter { animation: none; } }
+
+.mono { font-family: var(--mono); }
+.muted { color: var(--muted); }
+.tiny { font-size: 12px; line-height: 1.35; }
+
+.top { padding: 4px 6px 4px; }
+.eyebrow { margin: 0 0 4px; font-size: 12px; color: var(--muted); }
+.title {
+  margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance;
+  outline: none; border-radius: 8px;
+}
+.title[contenteditable]:focus-visible { box-shadow: 0 0 0 2px var(--ink); }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tile {
+  background: var(--tile); border-radius: var(--r); padding: 16px; min-width: 0;
+  display: flex; flex-direction: column; gap: 6px; border: 0; text-align: left;
+}
+.tile-wide { grid-column: 1 / -1; }
+.label { font-size: 13px; font-weight: 600; }
+.row-between { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+
+/* Date widget */
+.tile-date { aspect-ratio: 1; justify-content: center; }
+.date-big { position: relative; display: flex; flex-direction: column; cursor: pointer; }
+.date-big input { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
+.date-wd { font-size: 13px; color: var(--muted); }
+.date-num { font-size: 56px; font-weight: 500; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+
+/* Dot grid widget */
+.tile-dots { aspect-ratio: 1; }
+.dots { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-top: auto; }
+.dots span { aspect-ratio: 1; border-radius: 50%; background: var(--dot); }
+.dots span.on { background: var(--ink); }
+
+/* Small icon tiles */
+.tile-small { justify-content: flex-end; min-height: 108px; cursor: default; }
+label.tile-small { cursor: text; }
+.ico, .round svg, .icon-btn svg {
+  width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.ico { margin-bottom: auto; }
+.small-label { font-size: 13px; font-weight: 600; }
+.inline-input { display: flex; align-items: baseline; gap: 4px; }
+.inline-input input { width: 100%; min-width: 0; border: 0; background: none; padding: 0; font: 500 22px/1 var(--mono); }
+.unit, .value { font-size: 13px; color: var(--muted); }
+.value { color: var(--fg); font-size: 15px; }
+
+/* People list */
+.people, .links { list-style: none; margin: 4px 0 0; padding: 0; display: grid; }
+.person, .link-row { border-top: 1px solid var(--line); padding: 10px 0; }
+.person:first-child, .link-row:first-child { border-top: 0; }
+.person-main, .link-row { display: flex; align-items: center; gap: 10px; }
+.avatar {
+  width: 28px; height: 28px; flex: none; border-radius: 50%; background: var(--bg);
+  display: grid; place-items: center; font-size: 12px;
+}
+.person-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.person-name { font-weight: 500; overflow-wrap: anywhere; }
+.link-row .person-name { flex: 1; }
+.person-user { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.person-extra { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin: 8px 0 0 38px; }
+.person-extra input, .person-extra select {
+  min-width: 0; border: 1px solid var(--line); background: var(--bg); border-radius: 10px;
+  padding: 6px 10px; font-size: 13px;
+}
+.person-extra select { max-width: 150px; }
+.empty { padding: 10px 0; }
+.icon-btn { border: 0; background: none; padding: 6px; color: var(--muted); border-radius: 8px; }
+.icon-btn:hover { color: var(--danger); }
+
+.add { display: flex; gap: 8px; margin-top: 8px; }
+.add input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--bg); border-radius: 12px; padding: 10px 12px; }
+.round {
+  width: 40px; height: 40px; flex: none; border-radius: 50%; border: 0;
+  background: var(--ink); color: var(--on-ink); display: grid; place-items: center;
+}
+
+/* Buttons */
+.primary, .secondary, .ghost { width: 100%; border-radius: 16px; padding: 15px; font-weight: 600; border: 0; }
+.primary { background: var(--ink); color: var(--on-ink); }
+.secondary { background: var(--tile); color: var(--fg); }
+.ghost { background: transparent; color: var(--muted); }
+.chip { border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 6px 12px; font-size: 13px; font-weight: 500; }
+.link-row.done .chip { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.actions { display: grid; gap: 8px; }
+.foot { text-align: center; margin: 0; padding: 0 12px; }
+.error { margin: 0; color: var(--danger); text-align: center; font-size: 14px; }
+
+/* Reveal */
+.reveal { min-height: 170px; justify-content: center; align-items: flex-start; gap: 8px; cursor: pointer; }
+.reveal-name { font-size: 20px; font-weight: 500; letter-spacing: -0.01em; }
+.reveal.open .reveal-name { font-size: 40px; font-weight: 600; letter-spacing: -0.03em; }
+
+@media (min-width: 768px) { body { padding-top: 64px; } }

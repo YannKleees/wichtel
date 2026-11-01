@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#e9e9ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+<title>Wichtel</title>
+<meta name="description" content="A small Secret Santa draw. One link per person, no accounts, no server.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app" class="screen"></main>
+
+<template id="tpl-setup">
+  <header class="top">
+    <p class="eyebrow mono" id="today"></p>
+    <h1 class="title" contenteditable="true" spellcheck="false" id="group" aria-label="Group name"></h1>
+  </header>
+
+  <section class="grid">
+    <div class="tile tile-date">
+      <span class="label">Exchange</span>
+      <label class="date-big">
+        <span id="date-wd" class="date-wd"></span>
+        <span id="date-num" class="date-num">--</span>
+        <input type="date" id="date" aria-label="Exchange date">
+      </label>
+    </div>
+
+    <div class="tile tile-dots">
+      <div class="row-between"><span class="label">People</span><span class="muted mono" id="count">0</span></div>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+    </div>
+
+    <label class="tile tile-small" for="budget">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><circle cx="12" cy="12" r="2.5"/></svg>
+      <span class="small-label">Budget</span>
+      <span class="inline-input"><input id="budget" inputmode="decimal" placeholder="25"><span class="unit">EUR</span></span>
+    </label>
+
+    <div class="tile tile-small">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg>
+      <span class="small-label">Couples</span>
+      <span class="muted tiny">Set a partner below and they never draw each other.</span>
+    </div>
+
+    <div class="tile tile-wide">
+      <div class="row-between">
+        <span class="label">Participants</span>
+      </div>
+      <ul class="people" id="people"></ul>
+      <form class="add" id="add-form" autocomplete="off">
+        <input id="add-name" placeholder="Add a name" aria-label="Name">
+        <button class="round" type="submit" aria-label="Add person">
+          <svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <p class="error" id="error" role="alert" hidden></p>
+  <button class="primary" id="draw">Draw names</button>
+  <p class="foot muted tiny">Nothing is stored on a server. Each person gets a private link that only shows their own match.</p>
+</template>
+
+<template id="tpl-links">
+  <header class="top">
+    <p class="eyebrow mono">Drawn</p>
+    <h1 class="title" id="group"></h1>
+  </header>
+  <section class="grid">
+    <div class="tile tile-wide">
+      <div class="row-between"><span class="label">Send each person their link</span><span class="muted mono" id="sent">0 sent</span></div>
+      <span class="muted mono tiny" id="draw-id"></span>
+      <ul class="links" id="links"></ul>
+    </div>
+  </section>
+  <p class="foot muted tiny">Send each link as a private message. A link only contains that one person's match, and there is no page where anyone can browse other names.</p>
+  <div class="actions">
+    <button class="secondary" id="reroll">Reroll</button>
+    <button class="ghost" id="back">Edit people</button>
+  </div>
+</template>
+
+<template id="tpl-reveal">
+  <header class="top">
+    <p class="eyebrow mono" id="today"></p>
+    <h1 class="title" id="group"></h1>
+  </header>
+  <section class="grid">
+    <div class="tile tile-date">
+      <span class="label">Exchange</span>
+      <span class="date-wd" id="date-wd"></span>
+      <span class="date-num" id="date-num">--</span>
+    </div>
+    <div class="tile tile-dots">
+      <div class="row-between"><span class="label">Days left</span><span class="muted mono" id="left"></span></div>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+    </div>
+
+    <button class="tile tile-wide reveal" id="reveal" aria-live="polite">
+      <span class="label" id="hi"></span>
+      <span class="reveal-name" id="match">Tap to see who you draw</span>
+      <span class="muted mono tiny" id="match-user" hidden></span>
+      <span class="muted tiny" id="reveal-hint">Make sure nobody is looking at your screen.</span>
+      <span class="muted mono tiny" id="draw-id"></span>
+    </button>
+
+    <div class="tile tile-small">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><circle cx="12" cy="12" r="2.5"/></svg>
+      <span class="small-label">Budget</span>
+      <span class="value mono" id="budget"></span>
+    </div>
+    <div class="tile tile-small">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M5 11h14v9H5zM4 7h16v4H4zM12 7v13M12 7c-2-4-6-3-5 0M12 7c2-4 6-3 5 0"/></svg>
+      <span class="small-label">Wishes</span>
+      <span class="tiny" id="wish"></span>
+    </div>
+  </section>
+</template>
+
+<script src="draw.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
